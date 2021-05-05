@@ -28,8 +28,9 @@ function sameDate(date1, date2) {
             	
                 console.log(result.responseJSON);
 
-
+                var dateIndex = result.responseJSON.map(x => Object.keys(x)[0]);
                 var text='';
+                console.log(dateIndex);
 
 				for (var m = 0; m < months.length; m++) {
 					var monthNumber = Object.keys(months[m])[0];
@@ -38,7 +39,7 @@ function sameDate(date1, date2) {
 					let nbJours = new Date(fullYear,monthNumber,0).getDate();
 					text += '<div class="month" id="month'+ monthNumber +'"> <h3>'+ monthName +'</h3>' ;
 					for (var i = 1; i <= nbJours; i++) {
-						var today = fullYear + '-' + monthNumber + '-' + i;
+						var today = new Date(fullYear,m, i);
 						console.log(today);
 
 					 text += '<input type="checkbox" id="checkbox'+monthNumber+''+i+'" class="regular-checkbox" disabled/>';
