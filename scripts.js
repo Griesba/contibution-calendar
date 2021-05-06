@@ -77,7 +77,9 @@ $.ajax({
 			
 
 			let nbJours = new Date(currDate.getFullYear(),currDate.getMonth() -1,0).getDate();
-			console.log("nbJours="+nbJours +" currDate="+currDate);
+			
+			console.log("nbJours="+nbJours +" currDate="+currDate.toLocaleDateString());
+
 			text += '<div class="month" id="month'+ monthNumber +'"> <h3>'+ monthName +' '+currDate.getFullYear()+'</h3>' ;
 			for (var i = 1; i <= nbJours; i++) {
 
