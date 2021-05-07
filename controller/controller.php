@@ -14,9 +14,29 @@ if(isset($action)){
     switch($action) {
         case 'getContributions':
                
-                echo getContributions();
+                echo getContributions();               
                
-               
+            break;
+        case 'saveContribution':
+            $date = $_POST['date'];
+            $hasContribution = $_POST['hasContribution'] == 'true' ? 1 : 0;
+            $subject = $_POST['subject'];
+
+            echo "hasContribution=".$_POST['hasContribution'];
+            echo "hasContribution=".$hasContribution;
+            
+            //echo date_format(date_create_from_format ('m/d/Y', $_POST['date2']), 'D M d Y');
+            $dt = DateTime::createFromFormat('D M d Y', $date);
+            $date = date_format($dt, ' Y-m-d');
+
+            $timestamp = $dt->getTimestamp();
+            
+            if(contribution_exist($date)) {
+                update_contriburion($date, $hasContribution, $subject);
+            } else {
+                save_contribution($timestamp, $hasContribution, $subject);
+            }
+            
             break;
         case 'validation':
             if(isset($_POST['imageId']) && isset($_POST['cellId']) && isset($_POST['questionId'])) {
@@ -34,7 +54,7 @@ if(isset($action)){
 
 function getContributions () {
     
-        $contributions = get_contribution();
+        $contributions = get_contributions();
 
         return json_encode($contributions);
 }

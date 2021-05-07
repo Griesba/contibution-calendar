@@ -4,8 +4,15 @@
 
 .month {
 	max-width: 250px;
-	margin: 7px
+	margin: 7px;
+	font-family: 'Ruda', sans-serif;
+    font-size: 10px;
 }
+
+.contribution {
+	background-color: green !important;
+}
+
 
 /**
 source: https://www.html5canvastutorials.com/blog/2012/06/custom-form-radio-checkbox/

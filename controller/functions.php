@@ -30,7 +30,18 @@ function get_random_image() {
     return $images[0];
 
 }
-function get_contribution() {
+
+function contribution_exist($date) {
+    $instance = ConnectDb::getInstance();
+    $conn = $instance->getConnection();
+    $statement =  $conn->prepare('SELECT * FROM contribution WHERE contrib_date = ?');    
+    $statement->bindParam(1, $date);
+    $statement->execute();
+    $result  = $statement->fetchall();    
+    return count($result) == 0 ? false : true;
+}
+
+function get_contributions() {
     $instance = ConnectDb::getInstance();
     $conn = $instance->getConnection();
     $statement =  $conn->prepare('SELECT id, contrib_date, has_contributed, subject FROM contribution');    
@@ -41,16 +52,38 @@ function get_contribution() {
 
         $date = new DateTime($result['contrib_date']);
         $foramtedDate = $date->format('Y-m-d');
-        $obj = array(
+        
+        $contribution [] = array(
                 'subject' => $result['subject'],
                 'hasContribution' => $result['has_contributed'] === '1'? true : false,
                 'date' => $foramtedDate
             );
         
-        $contribution [] = array( $foramtedDate => $obj);
-        
     }
     return $contribution;
+}
+
+function update_contriburion($date, $hasContribution, $subject) {
+    $instance = ConnectDb::getInstance();
+    $conn = $instance->getConnection();
+
+    $stmt = $conn->prepare("UPDATE contribution SET has_contributed = ? WHERE contrib_date = ?");
+    $stmt->bindParam(1, $hasContribution);
+    $stmt->bindParam(2, $date);
+
+    $stmt->execute();
+}
+
+
+function save_contribution($timestamp, $hasContribution, $subject){
+    $instance = ConnectDb::getInstance();
+    $conn = $instance->getConnection();
+
+    $stmt = $conn->prepare("INSERT INTO contribution (contrib_date, has_contributed, subject) VALUES (FROM_UNIXTIME(?), ?, ?)");
+    $stmt->bindParam(1, $timestamp);
+    $stmt->bindParam(2, $hasContribution);
+    $stmt->bindParam(3, $subject);
+    $stmt->execute();
 }
 
 function save_selection ($imageId, $questionId, $cellId) {
