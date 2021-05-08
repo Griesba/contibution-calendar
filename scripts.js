@@ -118,7 +118,7 @@ $.ajax({
 			text += '<div class="month" id="month'+ monthNumber +'"> <h3>'+ monthName +' '+currDate.getFullYear()+'</h3>' ;
 			for (var i = 1; i <= nbJours; i++) {
 
-			 	text += '<input type="checkbox" onclick=checkboxClicked(this.id) id="'+currDate.getTime()+'" class="regular-checkbox '+ hasContrib(currDate.toLocaleDateString(), dateIndexArr, result.responseJSON)+'" disabled />';
+			 	text += '<input type="checkbox" onclick=checkboxClicked(this.id) id="'+currDate.getTime()+'" class="regular-checkbox '+ hasContrib(currDate.toLocaleDateString(), dateIndexArr, result.responseJSON)+'" />';
 				if (i%7 == 0) {
 					text += '<br>';
 				}
