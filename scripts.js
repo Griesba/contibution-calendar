@@ -40,7 +40,7 @@ function checkboxClicked(input) {
 	selectedDate.setTime(input);
 	console.log("request="+selectedDate.toLocaleDateString());
 	console.log($("#"+input).prop('checked'));
-	//var hasContribution = $("#"+input).prop('checked') === true? 1 : 0;
+	$("#"+input).prop('checked') === true? $("#"+input).addClass('contribution') : $("#"+input).removeClass('contribution');
 
 
 	$.ajax({
