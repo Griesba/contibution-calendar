@@ -37,7 +37,10 @@ function compare(date1, date2) {
 
 function checkboxClicked(input) {
 	var selectedDate = new Date();
-	selectedDate.setTime(input);
+	var inputSplitArr = input.split('-');
+	var inputTime = inputSplitArr[1];
+	var subject = inputSplitArr[0];
+	selectedDate.setTime(inputTime);
 	console.log("request="+selectedDate.toLocaleDateString());
 	console.log($("#"+input).prop('checked'));
 	$("#"+input).prop('checked') === true? $("#"+input).addClass('contribution') : $("#"+input).removeClass('contribution');
@@ -46,7 +49,7 @@ function checkboxClicked(input) {
 	$.ajax({
 		type:"POST",
 	    url:"controller/controller.php",
-	    data:{action: 'saveContribution', date: selectedDate.toDateString(), hasContribution: $("#"+input).prop('checked'), subject: 'sport'},
+	    data:{action: 'saveContribution', date: selectedDate.toDateString(), hasContribution: $("#"+input).prop('checked'), subject: subject},
 	    dataType: 'JSON',
 	    success: function(result, status){
 
@@ -87,9 +90,16 @@ $.ajax({
     complete: function(result){
     	
     	console.log(result.responseJSON);
+    	var subjectIndex = Object.keys(result.responseJSON);
+		var dateIndexArr = [];
+		subjectIndex.forEach(x =>  
+			dateIndexArr[x] = result.responseJSON[x].map(y => new Date(y['date']).toLocaleDateString())
+		)
 
-        var dateIndexArr = result.responseJSON.map(x => new Date(x['date']).toLocaleDateString());
+        
+        
         console.log(dateIndexArr);
+		
 		var now = new Date();
         var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         var oneYearBack = new Date();
@@ -102,7 +112,13 @@ $.ajax({
         var currDate = new Date(oneYearBack);
         //console.log("today="+today.toLocaleDateString()+" oneYearBack="+oneYearBack.toLocaleDateString()+" newDate="+newDate.toLocaleDateString()+" nbOdDaysInCurrMonth="+nbOdDaysInCurrMonth);
         
-		var text='';
+        
+		var textArr = [];
+		subjectIndex.forEach(x => {
+				textArr[x] = '' ;
+		});
+
+
         let d = 1;
         for (var k = 0, j = currDate.getMonth(); k < months.length; k++, j++) {
         	
@@ -114,15 +130,23 @@ $.ajax({
 			let nbJours = new Date(currDate.getFullYear(),currDate.getMonth() +1,0).getDate();
 			
 			//console.log("nbJours="+nbJours +" currDate="+currDate.toLocaleDateString());
+			subjectIndex.forEach(x => {
+				textArr[x] += '<div class="month" id="month'+ x + monthNumber +'"> <h3>'+ monthName +' '+currDate.getFullYear()+'</h3>' ;
+			})
+			//text += '<div class="month" id="month'+ monthNumber +'"> <h3>'+ monthName +' '+currDate.getFullYear()+'</h3>' ;
+			
 
-			text += '<div class="month" id="month'+ monthNumber +'"> <h3>'+ monthName +' '+currDate.getFullYear()+'</h3>' ;
+
 			for (var i = 1; i <= nbJours; i++) {
 
-			 	text += '<div class="tooltip"><input type="checkbox" onclick=checkboxClicked(this.id) id="'+currDate.getTime()+'" class="regular-checkbox '+ hasContrib(currDate.toLocaleDateString(), dateIndexArr, result.responseJSON)+'" />' +
-			 	'<span class="tooltiptext">'+ currDate.toDateString() +'</span></div>';
-				if (i%7 == 0) {
-					text += '<br>';
-				}
+				subjectIndex.forEach(x => {
+					textArr[x] += '<div class="tooltip"><input type="checkbox" onclick=checkboxClicked(this.id) id="'+ x + '-'+ currDate.getTime()+'" class="regular-checkbox '+ hasContrib(currDate.toLocaleDateString(), dateIndexArr[x], result.responseJSON[x])+'" />' +
+				 	'<span class="tooltiptext">'+ currDate.toDateString() +'</span></div>';
+					if (i%7 == 0) {
+						textArr[x] += '<br>';
+					}	
+				})
+			 	
 
 				currDate.setDate(currDate.getDate() + 1);
 		
@@ -133,13 +157,22 @@ $.ajax({
 				}
 			};
 
-			text += "</div>"
+			subjectIndex.forEach(x => {
+				textArr[x] += "</div>"	
+			});
+			
 
         };
 
-		$("#contribution-calendar").append(text);
+			
+			subjectIndex.forEach(x => {		
+				var text = '<div class="container" id="contribution-calendar-'+x+'">' + textArr[x]+ '</div>';
+				$("#contribution-calendar").append(text);
+
+			});
 		
-		$("#" + today.getTime()).prop("disabled", false);
+		
+		//$("#" + today.getTime()).prop("disabled", false);
     }
 });
 
