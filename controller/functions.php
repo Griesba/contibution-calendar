@@ -53,7 +53,7 @@ function get_contributions() {
         $date = new DateTime($result['contrib_date']);
         $foramtedDate = $date->format('Y-m-d');
         
-        $contribution [] = array(
+        $contribution [$result['subject']][] = array(
                 'subject' => $result['subject'],
                 'hasContribution' => $result['has_contributed'] === '1'? true : false,
                 'date' => $foramtedDate
