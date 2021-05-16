@@ -31,11 +31,12 @@ function get_random_image() {
 
 }
 
-function contribution_exist($date) {
+function contribution_exist($date, $subject) {
     $instance = ConnectDb::getInstance();
     $conn = $instance->getConnection();
-    $statement =  $conn->prepare('SELECT * FROM contribution WHERE contrib_date = ?');    
+    $statement =  $conn->prepare('SELECT * FROM contribution WHERE contrib_date = ? and subject = ?');    
     $statement->bindParam(1, $date);
+    $statement->bindParam(2, $subject);
     $statement->execute();
     $result  = $statement->fetchall();    
     return count($result) == 0 ? false : true;
